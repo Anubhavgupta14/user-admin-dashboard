@@ -10,8 +10,8 @@ export const Const = {
     ServiceUnavailable503: 503,
     GatewayTimeout504: 504,
     Redirect302: 302,
-    Link: "http://localhost:3001/",
-    //Link: process.env.REACT_BACKEND_URI,
+    //Link: "http://localhost:3001/",
+    Link: process.env.REACT_BACKEND_URI,
   };
   
   export const ProcessAPI = async (res) => {
