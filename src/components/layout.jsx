@@ -3,11 +3,14 @@ import "../styles/layout.css";
 import { FaUser } from "react-icons/fa";
 import { FaUserPlus } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
+import { Toaster, toast } from 'sonner'
 
 const Layout = ({ children }) => {
   const location = useLocation(); // Hook to get the current location
 
   return (
+    <>
+    <Toaster />
     <div className="parent-div">
       <div className="side-nav">
         <div className="side-header">
@@ -38,6 +41,7 @@ const Layout = ({ children }) => {
       </div>
       <div className="right-comp">{children}</div>
     </div>
+    </>
   );
 };
 

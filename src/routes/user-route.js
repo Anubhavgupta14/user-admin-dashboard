@@ -8,6 +8,7 @@ const AdminRoute = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/create-new-user" element={<CreateNewUser />} />
+        <Route path="/edit-user/:id" element={<CreateNewUser />} />
       </Routes>
   );
 };

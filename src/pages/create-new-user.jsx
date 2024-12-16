@@ -1,10 +1,14 @@
 import React, {useState, useEffect, useRef} from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import Layout from "../components/layout";
 import "../styles/new-user.css"
-import {createUser, editUser,getUser} from "../api/endpoint"
+import {createUser, editUser, getUser} from "../api/endpoint"
 import { toast } from 'sonner'
 
-const CreateNewUser = () => {
+const CreateUpdateUser = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [isEditMode, setIsEditMode] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -15,8 +19,8 @@ const CreateNewUser = () => {
   const [errors, setErrors] = useState({});
   const [imagePreview, setImagePreview] = useState(null);
   const fileInputRef = useRef(null);
+  const [loading, setLoading] = useState(false)
 
-  // Validation Functions
   const validateName = (name) => {
     const nameRegex = /^[A-Za-z\s]+$/;
     if (!name) return "Name is required";
@@ -39,10 +43,39 @@ const CreateNewUser = () => {
     return "";
   };
 
+  useEffect(() => {
+    if (id) {
+      setIsEditMode(true);
+      const fetchUserData = async () => {
+        try {
+          const response = await getUser(id);
+          if (response.success) {
+            const userData = response.data;
+            setFormData({
+              name: userData.name || '',
+              phone: userData.phone || '',
+              email: userData.email || '',
+              image: userData.images[0] || null
+            });
+
+            // Set image preview if image exists
+            if (userData.images[0]) {
+              setImagePreview(userData.images[0]);
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+          toast.error("Failed to fetch user data");
+        }
+      };
+
+      fetchUserData();
+    }
+  }, [id]);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     
-    // Specific validations
     let errorMessage = "";
     switch(name) {
       case 'name':
@@ -102,7 +135,7 @@ const CreateNewUser = () => {
 
   const handleSubmit = async(e) => {
     e.preventDefault();
-
+    setLoading(true)
     // Validate all fields before submission
     const nameError = validateName(formData.name);
     const phoneError = validatePhone(formData.phone);
@@ -123,22 +156,44 @@ const CreateNewUser = () => {
       return;
     }
 
-    try{
+    try {
       const formInput = new FormData();
       formInput.append('name', formData.name);
       formInput.append('phone', formData.phone);
       formInput.append('email', formData.email);
-      formInput.append('images', formData.image);
 
-      const res = await createUser(formInput);
-
-      if(res.success){
-        console.log("created")
-        toast.success("User Created Successfully")
+      // Only append image if it's a new file
+      if (formData.image instanceof File) {
+        formInput.append('images', formData.image);
       }
+
+      let res;
+      if (isEditMode) {
+        // For update, pass the ID
+        res = await editUser(id, formInput);
+      } else {
+        // For create
+        res = await createUser(formInput);
+      }
+
+      if (res.success) {
+        const successMessage = isEditMode 
+          ? "User Updated Successfully" 
+          : "User Created Successfully";
+        
+        toast.success(successMessage);
+        
+        navigate('/');
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error(isEditMode 
+        ? "Failed to update user" 
+        : "Failed to create user"
+      );
     }
-    catch(err){
-      console.log(err)
+    finally{
+      setLoading(false)
     }
   };
 
@@ -176,7 +231,8 @@ const CreateNewUser = () => {
     fileInputRef.current.click();
   };
 
-  const removeImage = () => {
+  const removeImage = (e) => {
+    e.stopPropagation()
     setFormData(prev => ({
       ...prev,
       image: null
@@ -191,7 +247,9 @@ const CreateNewUser = () => {
     <Layout>
       <div className="user-list">
         <div className="user-head">
-          <h4 className="main-head">Create New User</h4>
+          <h4 className="main-head">
+            {isEditMode ? 'Edit User' : 'Create New User'}
+          </h4>
         </div>
         <form 
           onSubmit={handleSubmit} 
@@ -277,7 +335,7 @@ const CreateNewUser = () => {
           </div>
 
           <button type="submit" className="submit-btn">
-            Create User
+            {loading ? "Loading..." : isEditMode ? 'Update User' : 'Create User'}
           </button>
         </form>
       </div>
@@ -285,4 +343,4 @@ const CreateNewUser = () => {
   );
 };
 
-export default CreateNewUser;
+export default CreateUpdateUser;

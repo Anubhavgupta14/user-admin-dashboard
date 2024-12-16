@@ -1,11 +1,9 @@
-import React from 'react';
-import '../styles/user-table.css';
+import React from "react";
+import "../styles/user-table.css";
+import { useNavigate } from "react-router-dom";
 
-const UserTable = ({
-    data, 
-  onEdit = (user) => console.log('Edit', user),
-  onDelete = (id) => console.log('Delete', id)
-}) => {
+const UserTable = ({ data, setIsDelete}) => {
+  const navigate = useNavigate();
   return (
     <div className="table-container">
       <table className="user-table">
@@ -18,29 +16,35 @@ const UserTable = ({
           </tr>
         </thead>
         <tbody>
-          {data && data.map((user) => (
-            <tr key={user.id}>
-              <td>{user.name}</td>
-              <td>{user.phone}</td>
-              <td>{user.email}</td>
-              <td>
-                <div className="action-buttons">
-                  <button 
-                    className="btn btn-edit" 
-                    onClick={() => onEdit(user)}
-                  >
-                    Edit
-                  </button>
-                  <button 
-                    className="btn btn-delete" 
-                    onClick={() => onDelete(user.id)}
-                  >
-                    Delete
-                  </button>
-                </div>
-              </td>
-            </tr>
-          ))}
+          {data &&
+            data.map((user) => (
+              <tr key={user.id}>
+                <td>
+                  <div className="name">
+                    <img src={user.images[0]} className="img"></img>
+                    <p>{user.name}</p>
+                    </div>
+                </td>
+                <td>{user.phone}</td>
+                <td>{user.email}</td>
+                <td>
+                  <div className="action-buttons">
+                    <button
+                      className="btn btn-edit"
+                      onClick={() => navigate(`/edit-user/${user._id}`)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="btn btn-delete"
+                      onClick={() => setIsDelete(user._id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
         </tbody>
       </table>
     </div>
