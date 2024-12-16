@@ -10,8 +10,8 @@ export const createUser = async (body) => {
   return res.json();
 };
 
-export const allList = async () => {
-  const res = await fetch(Const.Link + `api/users`, new Headers("GET"));
+export const allList = async ({params}) => {
+  const res = await fetch(Const.Link + `api/users?search=${params.search}`, new Headers("GET"));
   return ProcessAPI(res);
 };
 export const getUser = async (id) => {
