@@ -11,7 +11,7 @@ export const Const = {
     GatewayTimeout504: 504,
     Redirect302: 302,
     //Link: "http://localhost:3001/",
-    Link: process.env.REACT_BACKEND_URI,
+    Link: "https://user-dashboard-backend-one.vercel.app/",
   };
   
   export const ProcessAPI = async (res) => {
