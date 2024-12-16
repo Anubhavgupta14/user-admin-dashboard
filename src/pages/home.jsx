@@ -93,8 +93,8 @@ const Home = () => {
             />
           </div>
         </div>
-
         <UserTable data={data} loading={loading} setIsDelete={setIsDelete} />
+        
       </div>
 
       {isDelete && (

@@ -2,7 +2,7 @@ import React from "react";
 import "../styles/user-table.css";
 import { useNavigate } from "react-router-dom";
 
-const UserTable = ({ data, setIsDelete}) => {
+const UserTable = ({ data, setIsDelete, loading}) => {
   const navigate = useNavigate();
   return (
     <div className="table-container">
@@ -15,6 +15,8 @@ const UserTable = ({ data, setIsDelete}) => {
             <th>Actions</th>
           </tr>
         </thead>
+        {loading ? <div className="loader"></div>
+        :
         <tbody>
           {data &&
             data.map((user) => (
@@ -46,6 +48,7 @@ const UserTable = ({ data, setIsDelete}) => {
               </tr>
             ))}
         </tbody>
+}
       </table>
     </div>
   );
